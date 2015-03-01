@@ -1,0 +1,19 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+                "-//Hibernate/Hibernate Configuration DTD 4.0//EN"
+                "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+        <property name="hbm2ddl.auto">update</property>
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/test</property>
+        <property name="connection.username">Work</property>
+        <property name="connection.password">work</property>
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+
+        <mapping class="org.ompekar.chat.User"/>
+        <mapping class="org.ompekar.chat.Message"/>
+    </session-factory>
+
+</hibernate-configuration>

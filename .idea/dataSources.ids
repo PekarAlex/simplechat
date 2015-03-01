@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="dataSourceStorage">
+  <data-source name="MySQL - test@localhost" uuid="6e5b5354-aaa3-494d-861a-36c111cfda7e">
+    <database-info product="MySQL" version="5.6.23-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.34 ( Revision: jess.balint@oracle.com-20141014163213-wqbwpf1ok2kvo1om )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="lower" quoted-identifiers="lower"/>
+    <schema name="" catalog="test"/>
+    <table name="messages" schema="" catalog="test" type="TABLE">
+      <column name="id" sqlType="BIGINT" precision="19" scale="0" nullable="false" jdbcType="-5" autoIncrement="true"/>
+      <column name="created" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="message" sqlType="LONGTEXT" precision="2147483647" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="user_uuid" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="FKE84F656C5F94B4E1" columns="user_uuid" ref-table="users" ref-schema="" ref-catalog="test" ref-columns="uuid" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="id" unique="true" columns="id"/>
+      <index name="FKE84F656C5F94B4E1" unique="false" columns="user_uuid"/>
+    </table>
+    <table name="users" schema="" catalog="test" type="TABLE">
+      <column name="uuid" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="confirmed" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6"/>
+      <column name="email" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="uuid"/>
+      <exported-key name="FKE84F656C5F94B4E1" table="messages" schema="" catalog="test" columns="user_uuid"/>
+      <index name="username" unique="true" columns="username"/>
+      <index name="uuid" unique="true" columns="uuid"/>
+    </table>
+  </data-source>
+</component>

@@ -1,0 +1,105 @@
+BODY
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	background-color: #333;
+}
+#users
+{
+	width: 160px;
+	border: 1px solid #DFDCDC;
+	font-weight: bold;
+	-moz-border-radius: 11px;
+	-webkit-border-radius: 11px;
+	-khtml-border-radius: 11px;
+	border-radius: 11px;
+	display: table-cell;
+	text-align: left;
+	vertical-align: top;
+	padding: 0px 15px;
+}
+
+#users P
+{
+
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	-khtml-border-radius: 8px;
+	border-radius: 8px;
+	border: 1px solid #000000;
+	background-color: #25B11B;
+	padding: 4px;
+}
+#chat
+{
+	width: 90%;
+	margin-left: auto;
+	margin-right: auto;
+	-moz-border-radius: 15px;
+	-webkit-border-radius: 15px;
+	-khtml-border-radius: 15px;
+	border-radius: 15px;
+	overflow-y: auto;
+	border: 1px solid #DFDCDC;
+	height: 420px;
+}
+#chatframe
+{
+	width: 400px;
+	font-weight: bold;
+	display: table-cell;
+}
+#logout
+{
+	width: 160px;
+	display: table-cell;
+	vertical-align: top;
+}
+TEXTAREA
+{
+	width: 90%;
+	resize: vertical;
+}
+#window
+{
+	display: table;
+	width: 100%;
+	margin-top: 0px;
+	margin-bottom: 40px;
+	text-align: center;
+	border-collapse: separate;
+	border-spacing: 5px;
+}
+.message
+{
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	border-radius: 10px;
+	margin: 16px;
+	border: 2px solid #000000;
+	text-align: left;
+	padding: 1px 1px 1px 8px;
+	word-break: break-all;
+}
+.messageuser
+{
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	-khtml-border-radius: 7px;
+	border-radius: 7px;
+	margin: 81px 3px 3px;
+	position: relative;
+	left: inherit;
+	top: -13px;
+	background-color: #25B11B;
+	padding: 3px;
+}
+#messagelabel
+{
+	text-align: left;
+	width: 90%;
+	margin-right: auto;
+	margin-left: auto;
+}
+

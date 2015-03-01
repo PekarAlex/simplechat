@@ -1,0 +1,126 @@
+BODY
+{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	background-color: #333;
+}
+
+STRONG
+{
+	color: red;
+}
+
+#container
+{
+	width: 365px;
+	margin-left: auto;
+	margin-right: auto;
+}
+#tabbox
+{
+	height: 40px;
+}
+#panel
+{
+	background-color: #F8FDEF;
+	height: auto;
+	/*+border-radius:10px 0 10px 10px;*/
+	-moz-border-radius: 10px 0 10px 10px;
+	-webkit-border-radius: 10px 0 10px 10px;
+	-khtml-border-radius: 10px 0 10px 10px;
+	border-radius: 10px 0 10px 10px;
+	/*[empty]margin:;*/
+}
+.tab
+{
+	background: #DEDEDE;
+	display: block;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	width: 80px;
+	float: right;
+	font-weight: bold;
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	-moz-border-radius: 4px 4px 0px 0px;
+}
+A
+{
+	color: #000;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+}
+.signup
+{
+	margin-left: 4px;
+}
+.select
+{
+	background-color: #F8FDEF;
+}
+#loginbox
+{
+	/*[disabled]height:300px;*/
+	/*[disabled]padding:0px;*/
+	margin: auto;
+}
+#signupbox
+{
+	/*[disabled]height:500px;*/
+	/*[disabled]padding:0px;*/
+	display: none;
+}
+.input-forms
+{
+	background: #F8FDEF;
+	border: 1px none #DFDCDC;
+	border-radius: 15px 15px 15px 15px;
+	display: inline-block;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-top: 0px;
+	padding: 9px;
+	width: 345px;
+}
+.input-forms .fieldgroup
+{
+	background: transparent;
+	display: inline-block;
+	padding: 8px 10px;
+	width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.input-forms .fieldgroup LABEL
+{
+	text-align: left;
+	clear: both;
+	float: left;
+	padding: 5px 0 0;
+	width: 110px;
+}
+.input-forms .fieldgroup INPUT, .input-forms .fieldgroup TEXTAREA, .input-forms .fieldgroup SELECT
+{
+	float: right;
+	display: block;
+	overflow: hidden;
+	margin: auto 0 5px;
+	height: 20px;
+}
+.input-forms .submit
+{
+	padding: 0px;
+	width: 150px;
+	height: 26px !important;
+}
+.input-forms .fieldgroup LABEL.error
+{
+	color: #FB3A3A;
+	display: inline-block;
+	margin: 4px 0 5px 125px;
+	padding: 0;
+	text-align: left;
+	width: 220px;
+}

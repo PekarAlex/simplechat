@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Chat login &amp; registration page</title>
+    <link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css"/>
+
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script src="js/languages/jquery.validationEngine-en.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jquery.validationEngine.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <script type="application/javascript">
+
+        function tabsDispatch() {
+            $(".tab").click(function () {
+                        var X = $(this).attr('id');
+
+                        if (X == 'signup') {
+                            $("#login").removeClass('select');
+                            $("#signup").addClass('select');
+                            $("#loginbox").hide();
+                            $("#signupbox").show();
+                        }
+                        else {
+                            $("#signup").removeClass('select');
+                            $("#login").addClass('select');
+                            $("#signupbox").hide();
+                            $("#loginbox").show();
+                        }
+
+                    }
+            )
+        }
+
+
+        function validation() {
+            $("#register-form").validationEngine();
+            $("#login-form").validationEngine();
+        }
+
+
+        $(document).ready(function () {
+                    tabsDispatch();
+                    validation();
+                    if ($("#registerinfo").length>0){
+                        $("#loginbox").hide();
+                        $("#signupbox").show();
+                    }
+              }
+        );
+
+    </script>
+
+</head>
+
+<body>
+<div style="margin:100px"/>
+<div id="container">
+    <div id="tabbox">
+        <a href="#" id="signup" class="tab signup  #if( $registerinfo ) select #end">Register</a>
+        <a href="#" id="login" class="tab #if( !$registerinfo ) select #end">Login</a>
+    </div>
+    <div id="panel">
+        <div id="loginbox">
+
+            <form  method="post" id="login-form" class="input-forms"  action="login">
+
+                <h2>User Login #if( $logininfo ) <br/><strong>$logininfo</strong>#end</h2>
+                <div>
+                    <fieldset>
+
+                        <div class="fieldgroup">
+                            <label for="login">Login</label>
+                            <input type="text" class="validate[required]" name="login"/>
+                        </div>
+
+                        <div class="fieldgroup">
+                            <label for="password">Password</label>
+                            <input type="password" class="validate[required]" name="password"/>
+                        </div>
+
+                        <div class="fieldgroup">
+                            <input type="submit" name="btn" class="submit" value="Login"/>
+                        </div>
+
+                    </fieldset>
+                </div>
+
+            </form>
+
+
+        </div>
+        <div id="signupbox">
+            <form  method="post" id="register-form" class="input-forms" action="register">
+
+                <h2>User Registration #if( $registerinfo )<br/> <strong id="registerinfo">$registerinfo</strong>#end</h2>
+
+                <div>
+                    <fieldset>
+
+                        <div class="fieldgroup">
+                            <label for="login">Login</label>
+                            <input type="text" class="validate[required]" name="login"/>
+                        </div>
+
+                        <div class="fieldgroup">
+                            <label for="email">Email</label>
+                            <input type="text" class="validate[required,custom[email]]" name="email" id="email"/>
+                        </div>
+
+                        <div class="fieldgroup">
+                            <label for="password">Password</label>
+                            <input type="password" class="validate[required]" name="password" id="password"/>
+                        </div>
+
+                        <div class="fieldgroup">
+                            <label for="confirmpassword">Confirm password</label>
+                            <input type="password" class="validate[required,equals[password]]" name="confirmpassword"/>
+                        </div>
+
+
+                        <div class="fieldgroup">
+                            <input type="submit" name="btn" class="submit" value="Register"/>
+                        </div>
+
+                    </fieldset>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
