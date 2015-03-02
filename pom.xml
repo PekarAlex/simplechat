@@ -21,6 +21,13 @@
       <version>2.7.7</version>
       <scope>compile</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>javax.persistence</artifactId>
+      <version>2.1.0</version>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
@@ -36,14 +43,14 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>4.1.0.Final</version>
+      <version>4.3.8.Final</version>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hibernate.common</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
-      <version>4.0.1.Final</version>
+      <version>4.0.5.Final</version>
       <scope>compile</scope>
     </dependency>
 
@@ -54,6 +61,22 @@
       <scope>compile</scope>
     </dependency>
     <!-- Hibernate dependencies END -->
+
+    <!-- Hibernate c3p0 connection pool -->
+    <dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-c3p0</artifactId>
+    <version>4.3.8.Final</version>
+  </dependency>
+
+    <dependency>
+      <groupId>com.mchange</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>0.9.5</version>
+    </dependency>
+
+
+    <!-- Hibernate c3p0 connection pool END -->
 
     <!-- Jetty dependencies BEGIN -->
     <dependency>
@@ -151,8 +174,8 @@
 
     <!-- Velocity dependencies BEGIN -->
     <dependency>
-      <groupId>org.apache.directory.studio</groupId>
-      <artifactId>org.dom4j.dom4j</artifactId>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
       <version>1.6.1</version>
       <scope>compile</scope>
     </dependency>
@@ -230,6 +253,17 @@
           </executions>
           <configuration>
             <finalName>uber-${project.artifactId}-${project.version}</finalName>
+
+            <filters>
+              <filter>
+                <artifact>*:*</artifact>
+                <excludes>
+                  <exclude>META-INF/*.SF</exclude>
+                  <exclude>META-INF/*.DSA</exclude>
+                  <exclude>META-INF/*.RSA</exclude>
+                </excludes>
+              </filter>
+            </filters>
 
             <transformers>
               <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">

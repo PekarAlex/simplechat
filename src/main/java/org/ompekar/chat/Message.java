@@ -95,22 +95,16 @@ public class Message {
         LinkedList<Message> messageLinkedList = null;
         SessionFactory factory = HibernateFactory.getInstance();
         Session session = factory.openSession();
-        Transaction tx = null;
+
         try {
-            tx = session.beginTransaction();
 
             String hql = "FROM Message ORDER BY created DESC";
             org.hibernate.Query query = session.createQuery(hql);
             query.setMaxResults(Count);
-
-
             messageLinkedList = new LinkedList(query.list());
             Collections.reverse(messageLinkedList);
 
-            tx.commit();
-
         } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
             e.printStackTrace();
         } finally {
             session.close();

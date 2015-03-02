@@ -76,19 +76,15 @@ public class User {
     public static User getUser(String userName) {
         SessionFactory factory = HibernateFactory.getInstance();
         Session session = factory.openSession();
-        Transaction tx = null;
         User user = null;
         try {
-            tx = session.beginTransaction();
 
             String hql = "FROM User WHERE username = :username";
             Query query = session.createQuery(hql);
             query.setParameter("username", userName);
             user = (User) query.uniqueResult();
-            tx.commit();
 
         } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
             e.printStackTrace();
         } finally {
             session.close();

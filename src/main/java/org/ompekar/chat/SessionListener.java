@@ -15,9 +15,9 @@ public class SessionListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
+
         HttpSession session = event.getSession();
         User currentUser = (User) session.getAttribute("user");
-
         HashSet<User> userSet = (HashSet<User>) session.getServletContext().getAttribute("users");
         synchronized (userSet) {
             userSet.remove(currentUser);

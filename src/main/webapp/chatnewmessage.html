@@ -4,7 +4,7 @@
 <body>
     #foreach($messageIndex in [$firstIndex..$lastIndex])
             <p class="message"><span class="messageuser">$messages[$messageIndex].getUser().getUserName()</span>
-                $messages[$messageIndex].getMessage()
+                #escape($messages[$messageIndex].getMessage())
             </p>
     #end
 </body>

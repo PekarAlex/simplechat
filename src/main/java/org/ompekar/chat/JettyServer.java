@@ -11,8 +11,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class JettyServer {
     public static Properties appProperties;
@@ -21,9 +19,9 @@ public class JettyServer {
 
         appProperties = new Properties();
 
-        InputStream is = new FileInputStream("chatproperties.xml");
-        //load the xml file into properties format
-        appProperties.loadFromXML(is);
+        InputStream is = new FileInputStream("chatconfig.properties");
+        //load the config file into properties format
+        appProperties.load(is);
 
 
         initLoggers();
@@ -32,16 +30,11 @@ public class JettyServer {
 
         WebAppContext webAppContext = getWebAppContext();
 
-        Server server = new Server(80);
+        Server server = new Server(Integer.valueOf(appProperties.getProperty("jetty.port", "8080")));
         server.setHandler(webAppContext);
 
 
-        TimerTask timerTask = new DispatchMessagesListTimerTask();
-        //running timer task as daemon thread
-        Timer timer = new Timer(true);
-        long delay=Long.valueOf(appProperties.getProperty("dispatcher.delay","6000000"));
-        timer.scheduleAtFixedRate(timerTask, delay, delay);
-        log.info("Messages dispatcher started");
+
 
 
         server.start();
@@ -71,7 +64,7 @@ public class JettyServer {
         DefaultServlet dS = new DefaultServlet();
         for (String ext : "js css png jpg ico".split(" "))
             webAppContext.addServlet(new ServletHolder(dS), "*." + ext);
-        webAppContext.addServlet(new ServletHolder(new ChatVelocityServlet()), "/");
+        webAppContext.addServlet(new ServletHolder(new ChatServlet()), "/");
         webAppContext.addEventListener(new SessionListener());
         return webAppContext;
     }

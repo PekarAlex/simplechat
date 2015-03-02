@@ -2,15 +2,13 @@ package org.ompekar.chat;
 
 
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
-
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -24,15 +22,16 @@ import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.Timer;
+
+import static java.lang.Integer.max;
 
 
-import static java.lang.Integer.*;
-
-
-class ChatVelocityServlet extends HttpServlet {
+class ChatServlet extends HttpServlet {
     private  HashSet<User> activeUsers;
     public static LinkedList<Message> lastMessages;
     private static VelocityEngine velocityEngine;
+
 
     private static VelocityEngine getInstanceOfVelocityEngine() {
         if (velocityEngine == null) {
@@ -44,21 +43,10 @@ class ChatVelocityServlet extends HttpServlet {
             properties.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
             properties.setProperty("file.resource.loader.class", FileResourceLoader.class.getName());
             properties.setProperty("file.resource.loader.path", "src/main/webapp");
-
-            //properties.setProperty("webapp.resource.loader.path", "/WEB-INF/");
-            //properties.setProperty("webapp.resource.loader.class", WebappResourceLoader.class.getName());
-
-            //velocityEngine.setApplicationAttribute("javax.servlet.ServletContext", "localhost:80");
+            properties.setProperty("userdirective","org.ompekar.chat.VelocityEscapeDirective");
 
 
             velocityEngine = new VelocityEngine(properties);
-        /*Velocity.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-        Velocity.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-        Velocity.setProperty("file.resource.loader.modificationCheckInterval",0);
-        Velocity.setProperty("input.encoding","UTF-8");
-        Velocity.setProperty("velocimacro.permissions.allow.inline",true);
-        Velocity.setProperty("velocimacro.library.autoreload",true);
-        */
             velocityEngine.init();
         }
         return velocityEngine;
@@ -99,28 +87,28 @@ class ChatVelocityServlet extends HttpServlet {
         String ctx = request.getContextPath();
         String base = url.substring(0, url.length() - uri.length() + ctx.length()) + "/";
 
-        VelocityContext context = new VelocityContext();
+
         User currentUser = (User) request.getSession().getAttribute("user");
 
         if ((uri.equals("/")) && (currentUser != null)) {
-            showChatPage(request, response, context);
+            showChatPage(request, response);
         } else if ((uri.equals("/")) && (currentUser == null)) {
             forwardToLoginRegisterPage(request, response);
         } else if (uri.endsWith("/loginregister")) {
-            showLoginRegisterPage(request, response, context);
+            showLoginRegisterPage(request, response);
         } else if (uri.endsWith("/login")) {
             loginUser(request, response);
         } else if (uri.endsWith("/register")) {
-            registerUser(request, response, base, context);
+            registerUser(request, response, base);
         } else if (uri.endsWith("/confirmationinfo")) {
-            showConfirmationPage(request, response, context);
+            showConfirmationPage(request, response);
         } else if (uri.endsWith("/confirm")) {
             confirmUser(request, response);
         } else if (uri.endsWith("/postmessage")) {
             postMessage(request, currentUser);
-            showMessages(request, response, context, currentUser);
+            showMessages(request, response, currentUser);
         } else if (uri.endsWith("/updateusers")) {
-            showUsers(response, context, currentUser);
+            showUsers(response, currentUser);
         } else if (uri.endsWith("/logout")) {
             logoutUser(request, response);
         }
@@ -131,10 +119,11 @@ class ChatVelocityServlet extends HttpServlet {
         rd.forward(request, response);
     }
 
-    private void showChatPage(HttpServletRequest request, HttpServletResponse response, VelocityContext context) throws IOException {
-        request.getSession().setAttribute("lastMessage", null);
+    private void showChatPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        request.getSession().setAttribute("lastMessage", null);
         //Chat window
+        VelocityContext context = new VelocityContext();
         handleTemplate("chat.html", response, context);
         //if user has no any http activity for 60 sec
         request.getSession().setMaxInactiveInterval(60);
@@ -145,9 +134,11 @@ class ChatVelocityServlet extends HttpServlet {
         response.sendRedirect("/");
     }
 
-    private void showUsers(HttpServletResponse response, VelocityContext context, User currentUser) throws IOException {
+    private void showUsers(HttpServletResponse response, User currentUser) throws IOException {
+
         if (currentUser != null) {
             synchronized (activeUsers) {
+                VelocityContext context = new VelocityContext();
                 context.put("activeUsers", activeUsers);
                 handleTemplate("chatusers.html", response, context);
             }
@@ -155,7 +146,7 @@ class ChatVelocityServlet extends HttpServlet {
     }
 
 
-    private void showMessages(HttpServletRequest request, HttpServletResponse response, VelocityContext context, User currentUser) throws IOException {
+    private void showMessages(HttpServletRequest request, HttpServletResponse response,  User currentUser) throws IOException {
         if (currentUser != null) {
             Message lastMessage = (Message) request.getSession().getAttribute("lastMessage");
             synchronized (lastMessages) {
@@ -169,6 +160,7 @@ class ChatVelocityServlet extends HttpServlet {
                     firstIndex = lastMessages.indexOf(lastMessage) + 1;
                 }
                 if (firstIndex <= lastIndex) {//some messages should be posted
+                    VelocityContext context = new VelocityContext();
                     context.put("messages", lastMessages);
                     context.put("firstIndex", firstIndex);
                     context.put("lastIndex", lastIndex);
@@ -185,12 +177,7 @@ class ChatVelocityServlet extends HttpServlet {
 
             if ((messagetext != null) && (!messagetext.isEmpty())) {
 
-                //messagetext = messagetext.replaceAll("(?i)<(/?script[^>]*)>", "&lt;$1&gt;");
-                //messagetext = StringEscapeUtils.escapeHtml(messagetext);
 
-
-                messagetext=StringUtils.replaceEach(messagetext,  new String[]{"&", "<", ">", "\"", "'", "/"}, new String[]{"&amp;", "&lt;", "&gt;", "&quot;", "&#x27;", "&#x2F;"});
-                messagetext = messagetext.replaceAll("(\r\n|\n)", "<br />");
                 Message message = new Message();
                 message.setMessage(messagetext);
                 message.setUser(currentUser);
@@ -221,17 +208,18 @@ class ChatVelocityServlet extends HttpServlet {
         }
     }
 
-    private void showConfirmationPage(HttpServletRequest request, HttpServletResponse response, VelocityContext context) throws IOException {
+    private void showConfirmationPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        VelocityContext context = new VelocityContext();
         context.put("username", request.getParameter("login"));
         context.put("email", request.getParameter("email"));
         handleTemplate("confirmationinfo.html", response, context);
     }
 
-    private void registerUser(HttpServletRequest request, HttpServletResponse response, String base, VelocityContext context) throws ServletException, IOException {
+    private void registerUser(HttpServletRequest request, HttpServletResponse response, String base) throws ServletException, IOException {
         String username = request.getParameter("login");
         String password = request.getParameter("password");
         String email = request.getParameter("email");
-        if ((username != null) && (password != null) && (email != null)) {
+        if (username != null && password != null && email != null) {
             User user = User.getUser(username);
             if (user == null) {
                 //don't have any user with selected name
@@ -243,6 +231,7 @@ class ChatVelocityServlet extends HttpServlet {
                 if (User.addUser(user)) {
                     VelocityEngine ve = getInstanceOfVelocityEngine();
                     Template emailTemplate = ve.getTemplate("confirmationletter.html");
+                    VelocityContext context = new VelocityContext();
                     context.put("username", user.getUserName());
                     context.put("confirmationlink", base.concat("confirm"));
                     context.put("confirmationUUID", user.getUuid());
@@ -291,7 +280,8 @@ class ChatVelocityServlet extends HttpServlet {
         }
     }
 
-    private void showLoginRegisterPage(HttpServletRequest request, HttpServletResponse response, VelocityContext context) throws IOException {
+    private void showLoginRegisterPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        VelocityContext context = new VelocityContext();
         context.put("logininfo", request.getAttribute("logininfo"));
         context.put("registerinfo", request.getAttribute("registerinfo"));
         handleTemplate("loginregister.html", response, context);
@@ -301,12 +291,21 @@ class ChatVelocityServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
 
         super.init(config);
+        Logger log = Logger.getLogger("ChatLogger");
+
+        DispatchMessagesListTimerTask messagesDispatcher = new DispatchMessagesListTimerTask();
+        //running timer task as daemon thread
+        Timer timer = new Timer(true);
+        long delay=Long.valueOf(JettyServer.appProperties.getProperty("dispatcher.delay","6000000"));
+        timer.scheduleAtFixedRate(messagesDispatcher, delay, delay);
+        log.info("Messages dispatcher started");
+
         //hibernate init
         HibernateFactory.getInstance();
 
 
         getInstanceOfVelocityEngine();
-        Logger log = Logger.getLogger("ChatLogger");
+
         log.info("Velocity Engine started");
 
 
