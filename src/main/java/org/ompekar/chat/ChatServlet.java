@@ -19,19 +19,35 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Properties;
-import java.util.Timer;
+import java.util.*;
 
 import static java.lang.Integer.max;
 
 
 class ChatServlet extends HttpServlet {
     private  HashSet<User> activeUsers;
-    public static LinkedList<Message> lastMessages;
+    private static LinkedList<Message> lastMessages;
     private static VelocityEngine velocityEngine;
 
+    public class DispatchMessagesListTimerTask extends TimerTask {
+
+
+        @Override
+        public void run() {
+            synchronized(lastMessages) {
+                if (lastMessages != null && lastMessages.size() > 10) {
+                    Iterator<Message> itr = lastMessages.iterator();
+                    long current = new Date().getTime();
+                    while (itr.hasNext()) {
+                        Message message = itr.next();
+                        if (current - message.getCreated().getTime() > 600000L) itr.remove();
+                        if (lastMessages.size() <= 10) break;
+
+                    }
+                }
+            }
+        }
+    }
 
     private static VelocityEngine getInstanceOfVelocityEngine() {
         if (velocityEngine == null) {
@@ -90,9 +106,9 @@ class ChatServlet extends HttpServlet {
 
         User currentUser = (User) request.getSession().getAttribute("user");
 
-        if ((uri.equals("/")) && (currentUser != null)) {
+        if (uri.equals("/") && currentUser != null) {
             showChatPage(request, response);
-        } else if ((uri.equals("/")) && (currentUser == null)) {
+        } else if (uri.equals("/") && currentUser == null) {
             forwardToLoginRegisterPage(request, response);
         } else if (uri.endsWith("/loginregister")) {
             showLoginRegisterPage(request, response);
@@ -293,12 +309,7 @@ class ChatServlet extends HttpServlet {
         super.init(config);
         Logger log = Logger.getLogger("ChatLogger");
 
-        DispatchMessagesListTimerTask messagesDispatcher = new DispatchMessagesListTimerTask();
-        //running timer task as daemon thread
-        Timer timer = new Timer(true);
-        long delay=Long.valueOf(JettyServer.appProperties.getProperty("dispatcher.delay","6000000"));
-        timer.scheduleAtFixedRate(messagesDispatcher, delay, delay);
-        log.info("Messages dispatcher started");
+
 
         //hibernate init
         HibernateFactory.getInstance();
@@ -313,6 +324,15 @@ class ChatServlet extends HttpServlet {
         getServletContext().setAttribute("users", activeUsers);
         lastMessages = Message.getMessages(10);
 
+
+        //Create inner class object
+        ChatServlet.DispatchMessagesListTimerTask messagesDispatcher=this.new DispatchMessagesListTimerTask();
+
+        //running timer task as daemon thread
+        Timer timer = new Timer(true);
+        long delay=Long.valueOf(JettyServer.appProperties.getProperty("dispatcher.delay","6000000"));
+        timer.scheduleAtFixedRate(messagesDispatcher, delay, delay);
+        log.info("Messages dispatcher started");
 
 
     }
