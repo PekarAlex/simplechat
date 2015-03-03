@@ -4,6 +4,7 @@ BODY
 	font-size: 12px;
 	background-color: #333;
 }
+
 #users
 {
 	width: 160px;
@@ -30,6 +31,7 @@ BODY
 	background-color: #25B11B;
 	padding: 4px;
 }
+
 #chat
 {
 	width: 90%;
@@ -43,23 +45,27 @@ BODY
 	border: 1px solid #DFDCDC;
 	height: 420px;
 }
+
 #chatframe
 {
 	width: 400px;
 	font-weight: bold;
 	display: table-cell;
 }
+
 #logout
 {
 	width: 160px;
 	display: table-cell;
 	vertical-align: top;
 }
+
 TEXTAREA
 {
 	width: 90%;
 	resize: vertical;
 }
+
 #window
 {
 	display: table;
@@ -70,6 +76,7 @@ TEXTAREA
 	border-collapse: separate;
 	border-spacing: 5px;
 }
+
 .message
 {
 	-moz-border-radius: 10px;
@@ -81,7 +88,9 @@ TEXTAREA
 	text-align: left;
 	padding: 1px 1px 1px 8px;
 	word-break: break-all;
+	color: #FFFFFF;
 }
+
 .messageuser
 {
 	-moz-border-radius: 7px;
@@ -94,12 +103,14 @@ TEXTAREA
 	top: -13px;
 	background-color: #25B11B;
 	padding: 3px;
+	color: #000000;
 }
+
 #messagelabel
 {
 	text-align: left;
 	width: 90%;
 	margin-right: auto;
 	margin-left: auto;
+	color: #FFFFFF;
 }
-

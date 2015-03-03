@@ -7,7 +7,6 @@ import org.hibernate.cfg.Configuration;
 import java.util.Map;
 
 public class HibernateFactory {
-
     private static SessionFactory sessionFactory;
 
     private HibernateFactory() {
@@ -17,23 +16,29 @@ public class HibernateFactory {
         if (sessionFactory == null) {
             try {
                 Configuration configuration = new Configuration();
+
                 //configuration.configure("hibernate.cfg.xml");
-                configuration.configure();
+                //configuration.configure();
 
                 //hibernate connection parameters
-                for (Map.Entry<Object, Object> e : JettyServer.appProperties.entrySet()) {
+                for (Map.Entry<Object, Object> e : Config.getInstance().entrySet()) {
                     String key = (String) e.getKey();
-                    if (key.startsWith("connection.")){
+                    if (key.startsWith("connection.") || key.startsWith("hibernate.")){
                         String value = (String) e.getValue();
-                        configuration.setProperty(key,value);
+                        configuration.setProperty(key, value);
                     }
                 }
+                configuration.setProperty("hbm2ddl.auto", Config.getInstance().getProperty("hbm2ddl.auto",""));
+                configuration.setProperty("dialect", Config.getInstance().getProperty("dialect",""));
 
-                StandardServiceRegistryBuilder builder= new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
-                sessionFactory= configuration.buildSessionFactory(builder.build());
-                //depricated
-                //ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties()).buildServiceRegistry();
-                //sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+
+
+
+                configuration.addAnnotatedClass(org.ompekar.chat.User.class);
+                configuration.addAnnotatedClass(org.ompekar.chat.Message.class);
+
+                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
+                sessionFactory = configuration.buildSessionFactory(builder.build());
             } catch (Throwable ex) {
                 System.err.println("Failed to create sessionFactory object." + ex);
                 throw new ExceptionInInitializerError(ex);
@@ -41,8 +46,6 @@ public class HibernateFactory {
         }
         return sessionFactory;
     }
-
-
 }
 
 

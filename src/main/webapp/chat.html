@@ -1,74 +1,59 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="css/chatstyle.css" type="text/css"/>
-    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
-    <script type="application/javascript">
+#parse( "header.html" )
+<link rel="stylesheet" href="css/chatstyle.css" type="text/css"/>
+<script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+<script type="application/javascript">
+    function getMessages(newMessage) {
+        $.post("postmessage", {message: newMessage},
+                function (data) {
+                    var chatSelection=$("#chat");
+                    chatSelection.append(data);
+                    chatSelection.scrollTop(chatSelection[0].scrollHeight);
+                    $("textarea[name=newmessage]").focus();
+                }
+        )
+    }
 
-        function getMessages(newMessage) {
-            $.post("postmessage", {message: newMessage},
-                    function (data) {
-                        var chatSelection=$("#chat");
-                        chatSelection.append(data);
-                        chatSelection.scrollTop(chatSelection[0].scrollHeight);
-                        $("textarea[name=newmessage]").focus();
-                    }
-            )
-        }
-
-        function getUsers() {
-            $.post("updateusers",
-                    function (data) {
-                        var userSelection=$("#users");
-                        userSelection.html(data);
-                    }
-            )
-        }
+    function getUsers() {
+        $.post("updateusers",
+                function (data) {
+                    var userSelection=$("#users");
+                    userSelection.html(data);
 
 
-        $(document).ready(function () {
-            $("button[name=postmessage]").click(function () {
-                var textareaSelection=$("textarea[name=newmessage]");
-                var messageValue=textareaSelection.val();
-                textareaSelection.val("");
-                getMessages(messageValue);
-            });
+                }
+        )
+    }
 
-            window.setInterval(getMessages,5000);
-            window.setInterval(getUsers,5000);
-
-            getUsers();
-            getMessages();
-            $(window).on("beforeunload", function(){
-                $.get("logout");
-            });
-        })
-
-
-
-    </script>
-
-
-    <title>Chat</title>
-</head>
-<body>
+    $(document).ready(function () {
+        $("button[name=postmessage]").click(function () {
+            var textareaSelection=$("textarea[name=newmessage]");
+            var messageValue=textareaSelection.val();
+            textareaSelection.val("");
+            getMessages(messageValue);
+        });
+        window.setInterval(getMessages,5000);
+        window.setInterval(getUsers,5000);
+        getUsers();
+        getMessages();
+        $(window).on("beforeunload", function(){
+            $.get("logout");
+        });
+        $("#users").delegate("#user", "click", function() {
+            var textareaSelection=$("textarea[name=newmessage]");
+            textareaSelection.val("@"+$(this).text()+" ");
+            textareaSelection.focus();
+        });
+    })
+</script>
 
 <div id="window" style="margin:40px">
     <div id="users">
         <!--place for users-->
     </div>
-
     <div id="chatframe">
         <div id="chat">
             <!--place for messages-->
-
-
         </div>
-
-
-
         <div id="newmessage">
             <div class="fieldgroup">
                 <div id="messagelabel">
@@ -77,10 +62,7 @@
                 <textarea rows="8"  name="newmessage"></textarea></br>
                 <button type="button" name="postmessage" onclick="">Post message</button>
             </div>
-
-
         </div>
-
     </div>
     <div id="logout">
         <form  method="post" action="logout">
@@ -88,7 +70,4 @@
         </form>
     </div>
 </div>
-
-
-</body>
-</html>
+#include( "footer.html" )

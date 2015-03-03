@@ -16,21 +16,22 @@ STRONG
 	margin-left: auto;
 	margin-right: auto;
 }
+
 #tabbox
 {
 	height: 40px;
 }
+
 #panel
 {
 	background-color: #F8FDEF;
 	height: auto;
-	/*+border-radius:10px 0 10px 10px;*/
 	-moz-border-radius: 10px 0 10px 10px;
 	-webkit-border-radius: 10px 0 10px 10px;
 	-khtml-border-radius: 10px 0 10px 10px;
 	border-radius: 10px 0 10px 10px;
-	/*[empty]margin:;*/
 }
+
 .tab
 {
 	background: #DEDEDE;
@@ -45,6 +46,7 @@ STRONG
 	-webkit-border-top-right-radius: 4px;
 	-moz-border-radius: 4px 4px 0px 0px;
 }
+
 A
 {
 	color: #000;
@@ -52,26 +54,27 @@ A
 	padding: 0;
 	text-decoration: none;
 }
+
 .signup
 {
 	margin-left: 4px;
 }
+
 .select
 {
 	background-color: #F8FDEF;
 }
+
 #loginbox
 {
-	/*[disabled]height:300px;*/
-	/*[disabled]padding:0px;*/
 	margin: auto;
 }
+
 #signupbox
 {
-	/*[disabled]height:500px;*/
-	/*[disabled]padding:0px;*/
 	display: none;
 }
+
 .input-forms
 {
 	background: #F8FDEF;
@@ -84,6 +87,7 @@ A
 	padding: 9px;
 	width: 345px;
 }
+
 .input-forms .fieldgroup
 {
 	background: transparent;
@@ -93,6 +97,7 @@ A
 	margin-left: auto;
 	margin-right: auto;
 }
+
 .input-forms .fieldgroup LABEL
 {
 	text-align: left;
@@ -101,6 +106,7 @@ A
 	padding: 5px 0 0;
 	width: 110px;
 }
+
 .input-forms .fieldgroup INPUT, .input-forms .fieldgroup TEXTAREA, .input-forms .fieldgroup SELECT
 {
 	float: right;
@@ -109,12 +115,14 @@ A
 	margin: auto 0 5px;
 	height: 20px;
 }
+
 .input-forms .submit
 {
 	padding: 0px;
 	width: 150px;
 	height: 26px !important;
 }
+
 .input-forms .fieldgroup LABEL.error
 {
 	color: #FB3A3A;

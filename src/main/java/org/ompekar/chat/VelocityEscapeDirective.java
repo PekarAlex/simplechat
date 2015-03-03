@@ -7,7 +7,6 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
-
 import java.io.IOException;
 import java.io.Writer;
 
@@ -32,18 +31,12 @@ public class VelocityEscapeDirective extends Directive{
             processString = String.valueOf(node.jjtGetChild(0).value(context));
         }
 
-
         //process and write result to writer
         processString= StringUtils.replaceEach(processString, new String[]{"&", "<", ">", "\"", "'", "/"}, new String[]{"&amp;", "&lt;", "&gt;", "&quot;", "&#x27;", "&#x2F;"});
         processString = processString.replaceAll("(\r\n|\n)", "<br />");
-
         writer.write(processString);
-
         return true;
-
     }
-
-
 }
 
 

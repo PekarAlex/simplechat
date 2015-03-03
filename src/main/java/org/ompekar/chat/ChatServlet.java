@@ -1,7 +1,5 @@
 package org.ompekar.chat;
 
-
-
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -9,7 +7,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,9 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
-
 import static java.lang.Integer.max;
-
 
 class ChatServlet extends HttpServlet {
     private  HashSet<User> activeUsers;
@@ -28,7 +23,6 @@ class ChatServlet extends HttpServlet {
     private static VelocityEngine velocityEngine;
 
     public class DispatchMessagesListTimerTask extends TimerTask {
-
 
         @Override
         public void run() {
@@ -49,10 +43,8 @@ class ChatServlet extends HttpServlet {
 
     public class SessionListener implements HttpSessionListener {
 
-
         @Override
         public void sessionCreated(HttpSessionEvent event) {
-
         }
 
         @Override
@@ -64,8 +56,6 @@ class ChatServlet extends HttpServlet {
                 activeUsers.remove(currentUser);
             }
         }
-
-
     }
 
     private static VelocityEngine getInstanceOfVelocityEngine() {
@@ -73,20 +63,16 @@ class ChatServlet extends HttpServlet {
             Properties properties = new Properties();
             properties.setProperty("runtime.log.logsystem.log4j.logger", "Velocity");
             properties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute");
-
             properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file,classpath");
             properties.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
             properties.setProperty("file.resource.loader.class", FileResourceLoader.class.getName());
             properties.setProperty("file.resource.loader.path", "src/main/webapp");
             properties.setProperty("userdirective","org.ompekar.chat.VelocityEscapeDirective");
 
-
             velocityEngine = new VelocityEngine(properties);
             velocityEngine.init();
         }
         return velocityEngine;
-
-
     }
 
     protected void handleTemplate(String templateName, HttpServletResponse response, VelocityContext context) throws IOException {
@@ -97,34 +83,28 @@ class ChatServlet extends HttpServlet {
         } catch (Exception e) {
             System.out.println("Error " + e);
         }
+
         /* now render the template into a StringWriter */
         if (template != null) {
-
             PrintWriter writer = response.getWriter();
             template.merge(context, writer);
         }
     }
-
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
     }
 
-
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
         response.setContentType("text/html;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
-
         StringBuffer url = request.getRequestURL();
         String uri = request.getRequestURI();
         String ctx = request.getContextPath();
         String base = url.substring(0, url.length() - uri.length() + ctx.length()) + "/";
 
-
         User currentUser = (User) request.getSession().getAttribute("user");
-
         if (uri.equals("/") && currentUser != null) {
             showChatPage(request, response);
         } else if (uri.equals("/") && currentUser == null) {
@@ -155,10 +135,10 @@ class ChatServlet extends HttpServlet {
     }
 
     private void showChatPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         request.getSession().setAttribute("lastMessage", null);
         //Chat window
         VelocityContext context = new VelocityContext();
+        context.put("title","Chat");
         handleTemplate("chat.html", response, context);
         //if user has no any http activity for 60 sec
         request.getSession().setMaxInactiveInterval(60);
@@ -170,7 +150,6 @@ class ChatServlet extends HttpServlet {
     }
 
     private void showUsers(HttpServletResponse response, User currentUser) throws IOException {
-
         if (currentUser != null) {
             synchronized (activeUsers) {
                 VelocityContext context = new VelocityContext();
@@ -179,7 +158,6 @@ class ChatServlet extends HttpServlet {
             }
         }
     }
-
 
     private void showMessages(HttpServletRequest request, HttpServletResponse response,  User currentUser) throws IOException {
         if (currentUser != null) {
@@ -209,15 +187,14 @@ class ChatServlet extends HttpServlet {
     private void postMessage(HttpServletRequest request, User currentUser) {
         if (currentUser != null) {
             String messagetext = request.getParameter("message");
-
             if ((messagetext != null) && (!messagetext.isEmpty())) {
-
-
                 Message message = new Message();
                 message.setMessage(messagetext);
                 message.setUser(currentUser);
                 message.setCreated(new java.util.Date());
+                message.setRecipientToMessage();
                 if (Message.addMessage(message)) {
+
                     //block this for other Thread
                     synchronized (lastMessages) {
                         lastMessages.add(message);
@@ -239,7 +216,6 @@ class ChatServlet extends HttpServlet {
                 request.getSession().setAttribute("user", user);
                 response.sendRedirect("/");
             }
-
         }
     }
 
@@ -247,6 +223,7 @@ class ChatServlet extends HttpServlet {
         VelocityContext context = new VelocityContext();
         context.put("username", request.getParameter("login"));
         context.put("email", request.getParameter("email"));
+        context.put("title","Confirmation info");
         handleTemplate("confirmationinfo.html", response, context);
     }
 
@@ -270,6 +247,8 @@ class ChatServlet extends HttpServlet {
                     context.put("username", user.getUserName());
                     context.put("confirmationlink", base.concat("confirm"));
                     context.put("confirmationUUID", user.getUuid());
+                    context.put("title","Confirmation letter");
+
                     /* now render the template into a StringWriter */
                     StringWriter writer = new StringWriter();
                     emailTemplate.merge(context, writer);
@@ -278,12 +257,11 @@ class ChatServlet extends HttpServlet {
                     rd.forward(request, response);
                 }
             } else {
-                //user with this name already registred
 
+                //user with this name already registred
                 request.setAttribute("registerinfo", "User with same name already exist");
                 RequestDispatcher rd = request.getRequestDispatcher("/");
                 rd.forward(request, response);
-
             }
         }
     }
@@ -294,6 +272,7 @@ class ChatServlet extends HttpServlet {
         if ((username != null) && (password != null)) {
             User user = User.getUser(username);
             if ((user != null) && (user.getPassword().equals(password))) {
+
                 //user is ok,
                 if (!user.getConfirmed()) {
                     request.setAttribute("logininfo", "user not confirmed");
@@ -307,6 +286,7 @@ class ChatServlet extends HttpServlet {
                     response.sendRedirect("/");
                 }
             } else {
+
                 //user login or pass error
                 request.setAttribute("logininfo", "login or password error");
                 RequestDispatcher rd = request.getRequestDispatcher("/");
@@ -319,39 +299,34 @@ class ChatServlet extends HttpServlet {
         VelocityContext context = new VelocityContext();
         context.put("logininfo", request.getAttribute("logininfo"));
         context.put("registerinfo", request.getAttribute("registerinfo"));
+        context.put("title","Chat login &amp; registration page");
         handleTemplate("loginregister.html", response, context);
     }
 
+
+
+
+
     @Override
     public void init(ServletConfig config) throws ServletException {
-
         super.init(config);
         Logger log = Logger.getLogger("ChatLogger");
 
-
-
         //hibernate init
         HibernateFactory.getInstance();
-
-
         getInstanceOfVelocityEngine();
-
         log.info("Velocity Engine started");
-
 
         activeUsers = new HashSet<User>();
         lastMessages = Message.getMessages(10);
-
 
         //Create inner class object
         ChatServlet.DispatchMessagesListTimerTask messagesDispatcher=this.new DispatchMessagesListTimerTask();
 
         //running timer task as daemon thread
         Timer timer = new Timer(true);
-        long delay=Long.valueOf(JettyServer.appProperties.getProperty("dispatcher.delay","6000000"));
+        long delay=Long.valueOf(Config.getInstance().getProperty("dispatcher.delay","6000000"));
         timer.scheduleAtFixedRate(messagesDispatcher, delay, delay);
         log.info("Messages dispatcher started");
-
-
     }
 }

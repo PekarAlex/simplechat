@@ -12,9 +12,12 @@
       <column name="created" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <column name="message" sqlType="LONGTEXT" precision="2147483647" scale="0" nullable="true" jdbcType="-1"/>
       <column name="user_uuid" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="recipient_uuid" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FKE84F656C5F94B4E1" columns="user_uuid" ref-table="users" ref-schema="" ref-catalog="test" ref-columns="uuid" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="FK_b1q6fn3erjqonejhn5nigeolp" columns="recipient_uuid" ref-table="users" ref-schema="" ref-catalog="test" ref-columns="uuid" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="id" unique="true" columns="id"/>
+      <index name="FK_b1q6fn3erjqonejhn5nigeolp" unique="false" columns="recipient_uuid"/>
       <index name="FKE84F656C5F94B4E1" unique="false" columns="user_uuid"/>
     </table>
     <table name="users" schema="" catalog="test" type="TABLE">
@@ -25,6 +28,7 @@
       <column name="username" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="uuid"/>
       <exported-key name="FKE84F656C5F94B4E1" table="messages" schema="" catalog="test" columns="user_uuid"/>
+      <exported-key name="FK_b1q6fn3erjqonejhn5nigeolp" table="messages" schema="" catalog="test" columns="recipient_uuid"/>
       <index name="username" unique="true" columns="username"/>
       <index name="uuid" unique="true" columns="uuid"/>
     </table>

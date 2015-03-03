@@ -1,11 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<body>
-    #foreach($messageIndex in [$firstIndex..$lastIndex])
-            <p class="message"><span class="messageuser">$messages[$messageIndex].getUser().getUserName()</span>
-                #escape($messages[$messageIndex].getMessage())
-            </p>
-    #end
-</body>
-</html>
+#foreach($messageIndex in [$firstIndex..$lastIndex])
+<p class="message"><span class="messageuser">#escape($messages[$messageIndex].createMessageTitle())</span>
+    #escape($messages[$messageIndex].getMessage())
+</p>
+#end

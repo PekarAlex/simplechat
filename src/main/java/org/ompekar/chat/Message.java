@@ -1,6 +1,5 @@
 package org.ompekar.chat;
 
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,8 +10,6 @@ import javax.persistence.*;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
-
 
 @Entity
 @Table(name = "Messages")
@@ -21,7 +18,6 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true)
     private Long id = -1L;
-
 
     @Column(name = "created")
     @Type(type = "timestamp")
@@ -35,7 +31,19 @@ public class Message {
     @JoinColumn(name = "user_uuid")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "recipient_uuid")
+    private User recipient;
+
     public Message() {
+    }
+
+    public User getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(User recipient) {
+        this.recipient = recipient;
     }
 
     public Long getId() {
@@ -89,21 +97,28 @@ public class Message {
         return messageCreated;
     }
 
+    public void setRecipientToMessage(){
+        if (message.charAt(0)=='@'){
+
+            //find user
+            int firstSpace=message.indexOf(' ');
+            String recipientText=message.substring(1,firstSpace);
+            recipient=User.getUser(recipientText);
+            message=message.substring(firstSpace+1);
+        }
+    }
 
     public static LinkedList<Message> getMessages(int Count) {
-
         LinkedList<Message> messageLinkedList = null;
         SessionFactory factory = HibernateFactory.getInstance();
         Session session = factory.openSession();
 
         try {
-
             String hql = "FROM Message ORDER BY created DESC";
             org.hibernate.Query query = session.createQuery(hql);
             query.setMaxResults(Count);
             messageLinkedList = new LinkedList(query.list());
             Collections.reverse(messageLinkedList);
-
         } catch (HibernateException e) {
             e.printStackTrace();
         } finally {
@@ -111,7 +126,13 @@ public class Message {
         }
         if (messageLinkedList == null) messageLinkedList = new LinkedList<Message>();
         return messageLinkedList;
-
-
     }
+
+    public String createMessageTitle(){
+        String username=getUser().getUserName();
+        User recipient=getRecipient();
+        if (recipient!=null) username=username+" -> "+recipient.getUserName();
+        return username;
+    }
+
 }

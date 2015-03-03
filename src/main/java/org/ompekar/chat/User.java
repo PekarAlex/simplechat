@@ -4,14 +4,11 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.*;
 import org.hibernate.Query;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "Users")
 public class User {
-
-
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -77,13 +74,13 @@ public class User {
         SessionFactory factory = HibernateFactory.getInstance();
         Session session = factory.openSession();
         User user = null;
+
         try {
 
             String hql = "FROM User WHERE username = :username";
             Query query = session.createQuery(hql);
             query.setParameter("username", userName);
             user = (User) query.uniqueResult();
-
         } catch (HibernateException e) {
             e.printStackTrace();
         } finally {
@@ -97,9 +94,9 @@ public class User {
         Session session = factory.openSession();
         Transaction tx = null;
         User user = null;
+
         try {
             tx = session.beginTransaction();
-
             String hql = "FROM User WHERE uuid = :uuid";
             Query query = session.createQuery(hql);
             query.setParameter("uuid", uuid);
@@ -107,8 +104,6 @@ public class User {
             user.setConfirmed(true);
             session.save(user);
             tx.commit();
-
-
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
@@ -118,12 +113,12 @@ public class User {
         return user;
     }
 
-
     public static boolean addUser(User user) {
         SessionFactory factory = HibernateFactory.getInstance();
         Session session = factory.openSession();
         Transaction tx = null;
         boolean userCreated = false;
+
         try {
             tx = session.beginTransaction();
             session.save(user);
@@ -138,18 +133,14 @@ public class User {
         return userCreated;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
-
         User user = (User) o;
-
         if (!email.equals(user.email)) return false;
         if (!password.equals(user.password)) return false;
         if (!userName.equals(user.userName)) return false;
-
         return true;
     }
 

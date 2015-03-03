@@ -34,7 +34,6 @@ public class JettyLog4jLogger implements org.eclipse.jetty.util.log.Logger {
         logger.info("", t);
     }
 
-
     public void debug(String s, long l) {
         logger.debug(s);
     }
@@ -89,7 +88,6 @@ public class JettyLog4jLogger implements org.eclipse.jetty.util.log.Logger {
             if (args.length > i) result += args[i];
             i++;
         }
-
         return result;
     }
 }

@@ -8,40 +8,19 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Properties;
-
 public class JettyServer {
-    public static Properties appProperties;
 
     public static void main(String[] args) throws Exception {
-
-        appProperties = new Properties();
-
-        InputStream is = new FileInputStream("chatconfig.properties");
-        //load the config file into properties format
-        appProperties.load(is);
-
 
         initLoggers();
         Logger log = Logger.getLogger(JettyServer.class);
 
-
         WebAppContext webAppContext = getWebAppContext();
-
-        Server server = new Server(Integer.valueOf(appProperties.getProperty("jetty.port", "8080")));
+        Server server = new Server(Integer.valueOf(Config.getInstance().getProperty("jetty.port", "8080")));
         server.setHandler(webAppContext);
-
-
-
-
-
         server.start();
         log.info("Start Jetty Server");
         server.join();
-
-
     }
 
     private static void initLoggers() {
@@ -65,8 +44,8 @@ public class JettyServer {
         for (String ext : "js css png jpg ico".split(" "))
             webAppContext.addServlet(new ServletHolder(dS), "*." + ext);
 
-
         ChatServlet chatServlet=new ChatServlet();
+
         //Create inner class object
         ChatServlet.SessionListener sessionListener=chatServlet.new SessionListener();
         webAppContext.addServlet(new ServletHolder(chatServlet), "/");
