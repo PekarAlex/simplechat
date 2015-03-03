@@ -64,8 +64,13 @@ public class JettyServer {
         DefaultServlet dS = new DefaultServlet();
         for (String ext : "js css png jpg ico".split(" "))
             webAppContext.addServlet(new ServletHolder(dS), "*." + ext);
-        webAppContext.addServlet(new ServletHolder(new ChatServlet()), "/");
-        webAppContext.addEventListener(new SessionListener());
+
+
+        ChatServlet chatServlet=new ChatServlet();
+        //Create inner class object
+        ChatServlet.SessionListener sessionListener=chatServlet.new SessionListener();
+        webAppContext.addServlet(new ServletHolder(chatServlet), "/");
+        webAppContext.addEventListener(sessionListener);
         return webAppContext;
     }
 }

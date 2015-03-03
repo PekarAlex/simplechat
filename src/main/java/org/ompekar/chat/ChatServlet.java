@@ -13,9 +13,7 @@ import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,7 +24,7 @@ import static java.lang.Integer.max;
 
 class ChatServlet extends HttpServlet {
     private  HashSet<User> activeUsers;
-    private static LinkedList<Message> lastMessages;
+    private  LinkedList<Message> lastMessages;
     private static VelocityEngine velocityEngine;
 
     public class DispatchMessagesListTimerTask extends TimerTask {
@@ -47,6 +45,27 @@ class ChatServlet extends HttpServlet {
                 }
             }
         }
+    }
+
+    public class SessionListener implements HttpSessionListener {
+
+
+        @Override
+        public void sessionCreated(HttpSessionEvent event) {
+
+        }
+
+        @Override
+        public void sessionDestroyed(HttpSessionEvent event) {
+
+            HttpSession session = event.getSession();
+            User currentUser = (User) session.getAttribute("user");
+            synchronized (activeUsers) {
+                activeUsers.remove(currentUser);
+            }
+        }
+
+
     }
 
     private static VelocityEngine getInstanceOfVelocityEngine() {
@@ -321,7 +340,6 @@ class ChatServlet extends HttpServlet {
 
 
         activeUsers = new HashSet<User>();
-        getServletContext().setAttribute("users", activeUsers);
         lastMessages = Message.getMessages(10);
 
 
